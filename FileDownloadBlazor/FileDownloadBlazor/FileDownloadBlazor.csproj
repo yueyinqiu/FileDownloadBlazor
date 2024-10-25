@@ -9,7 +9,7 @@
 		<RootNamespace>$(AssemblyName)</RootNamespace>
 		<IsTrimmable>true</IsTrimmable>
 
-		<Version>0.0.1</Version>
+		<Version>0.0.2</Version>
 		<PackageId>$(AssemblyName)</PackageId>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -18,8 +18,7 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Authors>yueyinqiu</Authors>
 		<Description>
-			Download file in blazor apps.
-			Supports asynchronously and synchronously downloading from uris, byte arrays, and streams.
+			Download file in blazor apps. Supports asynchronously and synchronously downloading from uris, byte arrays, and streams.
 		</Description>
 		<PackageTags>
 			Blazor;Wasm;WebAssembly;Download;File;Stream;Bytes;ByteArray;Sync;Synchronous
