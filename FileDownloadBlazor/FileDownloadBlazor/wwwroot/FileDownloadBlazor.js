@@ -1,5 +1,3 @@
-console.log("Loaded");
-
 export function downloadFromUri(fileName, uri)
 {
     const a = document.createElement("a");
