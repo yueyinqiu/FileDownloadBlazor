@@ -3,7 +3,6 @@
 @using FileDownloadBlazor
 
 @inject IFileDownloader Downloader
-@inject IFileDownloaderSync DownloaderSync
 
 <button @onclick="TestAsyncUri">TestAsyncUri</button>
 <button @onclick="TestAsyncBytes">TestAsyncBytes</button>
@@ -11,7 +10,6 @@
 <button @onclick="TestSyncUri">TestSyncUri</button>
 <button @onclick="TestSyncBytes">TestSyncBytes</button>
 <button @onclick="TestSyncStream">TestSyncStream</button>
-<button @onclick="TestSyncStreamAsync">TestSyncStreamAsync</button>
 
 @code
 {
@@ -34,22 +32,22 @@
         using var stream = new MemoryStream();
         stream.WriteByte(72);
         stream.WriteByte(101);
-        stream.Position = 0;
+        stream.Position = 1;
         await Downloader.DownloadAsync(
             stream,
-            "stream-async.png");
+            "stream-async.txt");
     }
 
     private void TestSyncUri()
     {
-        DownloaderSync.Download(
+        Downloader.Sync.Download(
             "./",
             "uri-sync.html");
     }
 
     private void TestSyncBytes()
     {
-        DownloaderSync.Download(
+        Downloader.Sync.Download(
             [72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33],
             "bytes-sync.txt");
     }
@@ -59,20 +57,9 @@
         using var stream = new MemoryStream();
         stream.WriteByte(72);
         stream.WriteByte(101);
-        stream.Position = 0;
-        DownloaderSync.Download(
+        stream.Position = 1;
+        Downloader.Sync.Download(
             stream,
-            "stream-sync.png");
-    }
-
-    private async Task TestSyncStreamAsync()
-    {
-        using var stream = new MemoryStream();
-        stream.WriteByte(72);
-        stream.WriteByte(101);
-        stream.Position = 0;
-        await DownloaderSync.DownloadAsync(
-            stream,
-            "stream-sync-async.png");
+            "stream-sync.txt");
     }
 }

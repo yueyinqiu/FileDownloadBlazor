@@ -1,18 +1,45 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 
+		<AssemblyName>FileDownloadBlazor</AssemblyName>
+		<RootNamespace>$(AssemblyName)</RootNamespace>
+		<IsTrimmable>true</IsTrimmable>
 
-  <ItemGroup>
-    <SupportedPlatform Include="browser" />
-  </ItemGroup>
+		<Version>0.0.1</Version>
+		<PackageId>$(AssemblyName)</PackageId>
+		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/yueyinqiu/FileDownloadBlazor.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Authors>yueyinqiu</Authors>
+		<Description>
+			Download file in blazor apps.
+			Supports asynchronously and synchronously downloading from uris, byte arrays, and streams.
+		</Description>
+		<PackageTags>
+			Blazor;Wasm;WebAssembly;Download;File;Stream;Bytes;ByteArray;Sync;Synchronous
+		</PackageTags>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.10" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="../../README.md">
+			<Pack>True</Pack>
+			<PackagePath>/</PackagePath>
+		</None>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.10" />
+	</ItemGroup>
 
 </Project>
