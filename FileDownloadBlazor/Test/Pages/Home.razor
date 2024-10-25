@@ -1,0 +1,78 @@
+﻿@page "/"
+
+@using FileDownloadBlazor
+
+@inject IFileDownloader Downloader
+@inject IFileDownloaderSync DownloaderSync
+
+<button @onclick="TestAsyncUri">TestAsyncUri</button>
+<button @onclick="TestAsyncBytes">TestAsyncBytes</button>
+<button @onclick="TestAsyncStream">TestAsyncStream</button>
+<button @onclick="TestSyncUri">TestSyncUri</button>
+<button @onclick="TestSyncBytes">TestSyncBytes</button>
+<button @onclick="TestSyncStream">TestSyncStream</button>
+<button @onclick="TestSyncStreamAsync">TestSyncStreamAsync</button>
+
+@code
+{
+    private async Task TestAsyncUri()
+    {
+        await Downloader.DownloadAsync(
+            "./", 
+            "uri-async.html");
+    }
+
+    private async Task TestAsyncBytes()
+    {
+        await Downloader.DownloadAsync(
+            [72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33],
+            "bytes-async.txt");
+    }
+
+    private async Task TestAsyncStream()
+    {
+        using var stream = new MemoryStream();
+        stream.WriteByte(72);
+        stream.WriteByte(101);
+        stream.Position = 0;
+        await Downloader.DownloadAsync(
+            stream,
+            "stream-async.png");
+    }
+
+    private void TestSyncUri()
+    {
+        DownloaderSync.Download(
+            "./",
+            "uri-sync.html");
+    }
+
+    private void TestSyncBytes()
+    {
+        DownloaderSync.Download(
+            [72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33],
+            "bytes-sync.txt");
+    }
+
+    private void TestSyncStream()
+    {
+        using var stream = new MemoryStream();
+        stream.WriteByte(72);
+        stream.WriteByte(101);
+        stream.Position = 0;
+        DownloaderSync.Download(
+            stream,
+            "stream-sync.png");
+    }
+
+    private async Task TestSyncStreamAsync()
+    {
+        using var stream = new MemoryStream();
+        stream.WriteByte(72);
+        stream.WriteByte(101);
+        stream.Position = 0;
+        await DownloaderSync.DownloadAsync(
+            stream,
+            "stream-sync-async.png");
+    }
+}
