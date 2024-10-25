@@ -1,9 +1,10 @@
 using Microsoft.JSInterop;
+using System.Diagnostics;
 
 namespace FileDownloadBlazor;
 
 internal sealed class FileDownloader(IJSRuntime jsRuntime) 
-    : IAsyncDisposable, IFileDownloader, IFileDownloaderSync
+    : IAsyncDisposable, IFileDownloader, ISyncFileDownloader
 {
     public async ValueTask DisposeAsync()
     {
@@ -46,12 +47,12 @@ internal sealed class FileDownloader(IJSRuntime jsRuntime)
         _ = await moduleTask;
     }
 
-    private bool isSync = false;
-    public IFileDownloaderSync Sync
+    private IJSInProcessObjectReference? syncModule = null;
+    public ISyncFileDownloader Sync
     {
         get
         {
-            if (isSync)
+            if (this.syncModule is not null)
                 return this;
 
             if (!moduleTask.IsCompleted)
@@ -70,28 +71,26 @@ internal sealed class FileDownloader(IJSRuntime jsRuntime)
                         "Failed to import FileDownloadBlazor JavaScript module.",
                         moduleTask.Exception);
             }
-            if (moduleTask.Result is not IJSInProcessObjectReference)
+            if (moduleTask.Result is not IJSInProcessObjectReference syncModule)
             {
                 throw new JSException(
                     "FileDownloadBlazor JavaScript module is not executed in process. " +
                     "So you can't use it synchronously.");
             }
 
-            isSync = true;
+            this.syncModule = syncModule;
             return this;
         }
     }
 
     public void Download(string uri, string fileName = "")
     {
-        var module = (IJSInProcessObjectReference)moduleTask.Result;
-        module.InvokeVoid("downloadFromUri", [fileName, uri]);
+        syncModule!.InvokeVoid("downloadFromUri", [fileName, uri]);
     }
 
     public void Download(byte[] bytes, string fileName = "")
     {
-        var module = (IJSInProcessObjectReference)moduleTask.Result;
-        module.InvokeVoid("downloadBytes", [fileName, bytes]);
+        syncModule!.InvokeVoid("downloadBytes", [fileName, bytes]);
     }
 
     public void Download(Stream stream, string fileName = "", bool leaveOpen = true)
