@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace FileDownloadBlazor.Extensions;
 
@@ -9,7 +10,7 @@ public static class ServiceCollectionExtensions
         ServiceLifetime lifeTime = ServiceLifetime.Scoped,
         object? key = null)
     {
-        services.Add(new ServiceDescriptor(
+        services.TryAdd(new ServiceDescriptor(
             typeof(IFileDownloader), key, typeof(FileDownloader), lifeTime));
         return services;
     }

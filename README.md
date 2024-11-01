@@ -3,7 +3,8 @@
 Download file in blazor apps. Supports asynchronously and synchronously downloading from uris, byte arrays, and streams.
 
 ## Notes
-1. `ISyncFileDownloader` is not registered as a service, use `IFileDownloader.Sync` instead.
+
+1. `ISyncFileDownloader` is not registered as a service, use `IFileDownloader.Sync` instead.
 2. `IFileDownloader.Sync` is only available for Blazor WebAssembly.
 3. `IFileDownloader.Sync` may throw exceptions if the JavaScript module has not been imported, since the modules can only be imported asynchronously.
     - But you don't have to worry about that, since it's not multithreaded.

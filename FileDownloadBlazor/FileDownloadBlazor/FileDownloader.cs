@@ -1,18 +1,17 @@
 using Microsoft.JSInterop;
-using System.Diagnostics;
 
 namespace FileDownloadBlazor;
 
-internal sealed class FileDownloader(IJSRuntime jsRuntime) 
+internal sealed class FileDownloader(IJSRuntime jsRuntime)
     : IAsyncDisposable, IFileDownloader, ISyncFileDownloader
 {
     public async ValueTask DisposeAsync()
     {
-        var module = await moduleTask;
+        var module = await this.moduleTask;
         await module.DisposeAsync();
     }
 
-    private readonly Task<IJSObjectReference> moduleTask = 
+    private readonly Task<IJSObjectReference> moduleTask =
         jsRuntime.InvokeAsync<IJSObjectReference>(
             "import",
             "./_content/FileDownloadBlazor/FileDownloadBlazor.js").AsTask();
@@ -21,7 +20,7 @@ internal sealed class FileDownloader(IJSRuntime jsRuntime)
         string uri, string fileName = "",
         CancellationToken cancellationToken = default)
     {
-        var module = await moduleTask;
+        var module = await this.moduleTask;
         await module.InvokeVoidAsync("downloadFromUri", cancellationToken, [fileName, uri]);
     }
 
@@ -29,7 +28,7 @@ internal sealed class FileDownloader(IJSRuntime jsRuntime)
         byte[] bytes, string fileName = "",
         CancellationToken cancellationToken = default)
     {
-        var module = await moduleTask;
+        var module = await this.moduleTask;
         await module.InvokeVoidAsync("downloadBytes", cancellationToken, [fileName, bytes]);
     }
 
@@ -37,14 +36,14 @@ internal sealed class FileDownloader(IJSRuntime jsRuntime)
         Stream stream, string fileName = "", bool leaveOpen = true,
         CancellationToken cancellationToken = default)
     {
-        var module = await moduleTask;
+        var module = await this.moduleTask;
         using var reference = new DotNetStreamReference(stream, leaveOpen);
         await module.InvokeVoidAsync("downloadStream", cancellationToken, [fileName, reference]);
     }
 
     public async Task CheckJavaScriptModuleAsync()
     {
-        _ = await moduleTask;
+        _ = await this.moduleTask;
     }
 
     private IJSInProcessObjectReference? syncModule = null;
@@ -55,23 +54,23 @@ internal sealed class FileDownloader(IJSRuntime jsRuntime)
             if (this.syncModule is not null)
                 return this;
 
-            if (!moduleTask.IsCompleted)
+            if (!this.moduleTask.IsCompleted)
             {
                 throw new JSException(
                     "FileDownloadBlazor JavaScript module has not been imported yet. " +
                     "So you can't use it synchronously at present.");
             }
-            if (!moduleTask.IsCompletedSuccessfully)
+            if (!this.moduleTask.IsCompletedSuccessfully)
             {
-                if (moduleTask.Exception is null)
+                if (this.moduleTask.Exception is null)
                     throw new JSException(
                         "Failed to import FileDownloadBlazor JavaScript module.");
                 else
                     throw new JSException(
                         "Failed to import FileDownloadBlazor JavaScript module.",
-                        moduleTask.Exception);
+                        this.moduleTask.Exception);
             }
-            if (moduleTask.Result is not IJSInProcessObjectReference syncModule)
+            if (this.moduleTask.Result is not IJSInProcessObjectReference syncModule)
             {
                 throw new JSException(
                     "FileDownloadBlazor JavaScript module is not executed in process. " +
@@ -85,12 +84,12 @@ internal sealed class FileDownloader(IJSRuntime jsRuntime)
 
     public void Download(string uri, string fileName = "")
     {
-        syncModule!.InvokeVoid("downloadFromUri", [fileName, uri]);
+        this.syncModule!.InvokeVoid("downloadFromUri", [fileName, uri]);
     }
 
     public void Download(byte[] bytes, string fileName = "")
     {
-        syncModule!.InvokeVoid("downloadBytes", [fileName, bytes]);
+        this.syncModule!.InvokeVoid("downloadBytes", [fileName, bytes]);
     }
 
     public void Download(Stream stream, string fileName = "", bool leaveOpen = true)
